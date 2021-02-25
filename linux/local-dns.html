@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Local domain DNS name discovery for Linux - Multicast DNS | Kurt Danielsson</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Blog">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/blog/assets/css/0.styles.56bf4c15.css" as="style"><link rel="preload" href="/blog/assets/js/app.87085b1f.js" as="script"><link rel="preload" href="/blog/assets/js/2.c849d94a.js" as="script"><link rel="preload" href="/blog/assets/js/14.9fb78966.js" as="script"><link rel="prefetch" href="/blog/assets/js/10.68d01312.js"><link rel="prefetch" href="/blog/assets/js/11.28351c04.js"><link rel="prefetch" href="/blog/assets/js/12.012a8387.js"><link rel="prefetch" href="/blog/assets/js/13.f1613de0.js"><link rel="prefetch" href="/blog/assets/js/15.e922720d.js"><link rel="prefetch" href="/blog/assets/js/3.2232844c.js"><link rel="prefetch" href="/blog/assets/js/4.d55aa230.js"><link rel="prefetch" href="/blog/assets/js/5.30bbb3f0.js"><link rel="prefetch" href="/blog/assets/js/6.f352c959.js"><link rel="prefetch" href="/blog/assets/js/7.49c7bf5a.js"><link rel="prefetch" href="/blog/assets/js/8.f204a827.js"><link rel="prefetch" href="/blog/assets/js/9.3df9cfd9.js">
+    <link rel="stylesheet" href="/blog/assets/css/0.styles.56bf4c15.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/blog/" class="home-link router-link-active"><!----> <span class="site-name">Kurt Danielsson</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/blog/" class="nav-link">
+  Start
+</a></div><div class="nav-item"><a href="/blog/home/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/blog/linux/" class="nav-link router-link-active">
+  Linux
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/blog/" class="nav-link">
+  Start
+</a></div><div class="nav-item"><a href="/blog/home/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/blog/linux/" class="nav-link router-link-active">
+  Linux
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Linux</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/blog/linux/" aria-current="page" class="sidebar-link">Linux</a></li><li><a href="/blog/linux/mdadm.html" class="sidebar-link">Setting up Linux Raid partitions using MDADM</a></li><li><a href="/blog/linux/local-dns.html" aria-current="page" class="active sidebar-link">Local domain DNS name discovery for Linux - Multicast DNS</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="local-domain-dns-name-discovery-for-linux-multicast-dns"><a href="#local-domain-dns-name-discovery-for-linux-multicast-dns" class="header-anchor">#</a> Local domain DNS name discovery for Linux - Multicast DNS</h1> <p>So coming from using Windows machines, I have always connected to other machines using their hostname such that I could run</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">ssh</span> kurt-server
+</code></pre></div><p>but when starting to use Linux I found that this does not always work. I found it working between my Ubuntu Desktop installation, but not for my server. After a bit of reserach, I found that what I wanted is called Multicast DNS. This is included in Ubuntu Desktop, just check if the service is running by using</p> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl status avahi-daemon
+</code></pre></div><p>and it will show</p> <div class="language-bash extra-class"><pre class="language-bash"><code>● avahi-daemon.service - Avahi mDNS/DNS-SD Stack
+     Loaded: loaded <span class="token punctuation">(</span>/lib/systemd/system/avahi-daemon.service<span class="token punctuation">;</span> enabled<span class="token punctuation">;</span> vendor <span class="token operator">&gt;</span>
+     Active: active <span class="token punctuation">(</span>running<span class="token punctuation">)</span> since Thu <span class="token number">2021</span>-02-25 06:09:59 CET<span class="token punctuation">;</span> 1h 19min ago
+TriggeredBy: ● avahi-daemon.socket
+   Main PID: <span class="token number">1153</span> <span class="token punctuation">(</span>avahi-daemon<span class="token punctuation">)</span>
+     Status: <span class="token string">&quot;avahi-daemon 0.7 starting up.&quot;</span>
+      Tasks: <span class="token number">2</span> <span class="token punctuation">(</span>limit: <span class="token number">38199</span><span class="token punctuation">)</span>
+     Memory: <span class="token number">2</span>.3M
+     CGroup: /system.slice/avahi-daemon.service
+             ├─1153 avahi-daemon: running <span class="token punctuation">[</span>LML-5CG0453CCJ.local<span class="token punctuation">]</span>
+             └─1206 avahi-daemon: <span class="token function">chroot</span> helper
+</code></pre></div><p>If it is not installed, for example on your Ubuntu server, just install the necessary packages with</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> avahi-daemon avahi-discover avahi-utils libnss-mdns mdns-scan
+</code></pre></div><p>and just make sure it is running with <code>systemctl status avahi-daemon</code>.</p> <p>After that, you can ping and remote ssh into your local machines using its hostname</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">ssh</span> kurt-server.local
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/blog/linux/mdadm.html" class="prev">
+        Setting up Linux Raid partitions using MDADM
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/blog/assets/js/app.87085b1f.js" defer></script><script src="/blog/assets/js/2.c849d94a.js" defer></script><script src="/blog/assets/js/14.9fb78966.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setting up Linux Raid partitions using MDADM | Kurt Danielsson</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Blog">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/blog/assets/css/0.styles.56bf4c15.css" as="style"><link rel="preload" href="/blog/assets/js/app.87085b1f.js" as="script"><link rel="preload" href="/blog/assets/js/2.c849d94a.js" as="script"><link rel="preload" href="/blog/assets/js/15.e922720d.js" as="script"><link rel="prefetch" href="/blog/assets/js/10.68d01312.js"><link rel="prefetch" href="/blog/assets/js/11.28351c04.js"><link rel="prefetch" href="/blog/assets/js/12.012a8387.js"><link rel="prefetch" href="/blog/assets/js/13.f1613de0.js"><link rel="prefetch" href="/blog/assets/js/14.9fb78966.js"><link rel="prefetch" href="/blog/assets/js/3.2232844c.js"><link rel="prefetch" href="/blog/assets/js/4.d55aa230.js"><link rel="prefetch" href="/blog/assets/js/5.30bbb3f0.js"><link rel="prefetch" href="/blog/assets/js/6.f352c959.js"><link rel="prefetch" href="/blog/assets/js/7.49c7bf5a.js"><link rel="prefetch" href="/blog/assets/js/8.f204a827.js"><link rel="prefetch" href="/blog/assets/js/9.3df9cfd9.js">
+    <link rel="stylesheet" href="/blog/assets/css/0.styles.56bf4c15.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/blog/" class="home-link router-link-active"><!----> <span class="site-name">Kurt Danielsson</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/blog/" class="nav-link">
+  Start
+</a></div><div class="nav-item"><a href="/blog/home/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/blog/linux/" class="nav-link router-link-active">
+  Linux
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/blog/" class="nav-link">
+  Start
+</a></div><div class="nav-item"><a href="/blog/home/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/blog/linux/" class="nav-link router-link-active">
+  Linux
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Linux</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/blog/linux/" aria-current="page" class="sidebar-link">Linux</a></li><li><a href="/blog/linux/mdadm.html" aria-current="page" class="active sidebar-link">Setting up Linux Raid partitions using MDADM</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#status-commands" class="sidebar-link">Status Commands</a></li><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#delete-raid" class="sidebar-link">Delete RAID</a></li><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#create-raid-1" class="sidebar-link">Create RAID 1</a></li><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#general" class="sidebar-link">General</a></li><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#making-a-clean-install-of-linux" class="sidebar-link">Making a clean install of Linux</a></li><li class="sidebar-sub-header"><a href="/blog/linux/mdadm.html#mdadm" class="sidebar-link">MDADM</a></li></ul></li><li><a href="/blog/linux/local-dns.html" class="sidebar-link">Local domain DNS name discovery for Linux - Multicast DNS</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="setting-up-linux-raid-partitions-using-mdadm"><a href="#setting-up-linux-raid-partitions-using-mdadm" class="header-anchor">#</a> Setting up Linux Raid partitions using MDADM</h1> <p>I just wantet to set up my disks in a Raid configuration, so I had to start reading up on it.</p> <h2 id="status-commands"><a href="#status-commands" class="header-anchor">#</a> Status Commands</h2> <p>Scan active raids</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm --detail --scan 
+</code></pre></div><p>Generate mdadm.conf</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
+</code></pre></div><p>Find active arrays</p> <div class="language- extra-class"><pre class="language-text"><code>cat /proc/mdstat
+</code></pre></div><p>Show raid status</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm -D /dev/md0
+</code></pre></div><p>Scan partition for raids</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm -E /dev/sdXY
+</code></pre></div><h2 id="delete-raid"><a href="#delete-raid" class="header-anchor">#</a> Delete RAID</h2> <p>First, unmount</p> <div class="language- extra-class"><pre class="language-text"><code>umount /dev/md0
+</code></pre></div><p>Stop and remove</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm --stop /dev/md0
+mdadm --remove /dev/md0
+</code></pre></div><h2 id="create-raid-1"><a href="#create-raid-1" class="header-anchor">#</a> Create RAID 1</h2> <div class="language- extra-class"><pre class="language-text"><code>mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sda1 /dev/sdc1
+</code></pre></div><h2 id="general"><a href="#general" class="header-anchor">#</a> General</h2> <p>When raid <code>/dev/md0</code> is created, make filesystem</p> <div class="language- extra-class"><pre class="language-text"><code>mkfs.ext4 -F /dev/md0
+</code></pre></div><p>Create mount point</p> <div class="language- extra-class"><pre class="language-text"><code>mkdir -p /mnt/md0
+</code></pre></div><p>Mount raid</p> <div class="language- extra-class"><pre class="language-text"><code>mount /dev/md0 /mnt/md0
+</code></pre></div><p>Check that raid is mounted</p> <div class="language- extra-class"><pre class="language-text"><code>df -h -x devtmpfs -x tmpfs
+</code></pre></div><p>Mount raid at boot, insert into <code>/etc/fstab</code></p> <div class="language- extra-class"><pre class="language-text"><code>/dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0
+</code></pre></div><p>Assemble existing linux_raid_member in new raid keeping data</p> <div class="language- extra-class"><pre class="language-text"><code>mdadm --assemble --run /dev/md1 /dev/sda1
+</code></pre></div><h2 id="making-a-clean-install-of-linux"><a href="#making-a-clean-install-of-linux" class="header-anchor">#</a> Making a clean install of Linux</h2> <p>I made a clean install of the system disk, leaving my two mdadm-created raid disks as they where, and when the new install of Ubuntu Server was completed, the Raid Array was showing up without any extra commands or anything. It worked perfectly.</p> <h2 id="mdadm"><a href="#mdadm" class="header-anchor">#</a> MDADM</h2> <ul><li>Check out my videos about setting up RAID 1 with mdadm in Linux.</li></ul> <iframe width="560" height="315" src="https://www.youtube.com/embed/yvakkoCBa5E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen"></iframe></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/blog/linux/" class="prev router-link-active">
+        Linux
+      </a></span> <span class="next"><a href="/blog/linux/local-dns.html">
+        Local domain DNS name discovery for Linux - Multicast DNS
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/blog/assets/js/app.87085b1f.js" defer></script><script src="/blog/assets/js/2.c849d94a.js" defer></script><script src="/blog/assets/js/15.e922720d.js" defer></script>
+  </body>
+</html>
